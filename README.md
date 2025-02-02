@@ -87,3 +87,11 @@ http://localhost
 
 🎉 **You're ready to start developing!** 🚀
 
+## **🛠️ Docker Services Included**
+
+The following services are included in `docker-compose.yml`:
+
+- **PostgreSQL** - Database service (`pgsql`)
+- **Mailpit** - Email testing service accessible at [`http://localhost:8025`](http://localhost:8025).
+- **Soketi** - WebSockets (Pusher alternative) running on port `6001`.
+- **Meilisearch** - Full-text search engine accessible at [`http://localhost:7700`](http://localhost:7700).
