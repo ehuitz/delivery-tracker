@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory; 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Terminal extends Model
 {
@@ -46,5 +47,36 @@ class Terminal extends Model
         $direction = $this->longitude >= 0 ? 'E' : 'W';
         return number_format($lng, 4) . '° ' . $direction;
     }
+
+    /**
+     * Get the packages that originate from this terminal.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function outgoingPackages(): HasMany
+    {
+        return $this->hasMany(Package::class, 'origin_terminal_id');
+    }
+
+    /**
+     * Get the packages that are arriving at this terminal.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function incomingPackages(): HasMany
+    {
+        return $this->hasMany(Package::class, 'destination_terminal_id');
+    }
+
+    /**
+     * Get the formatted terminal name with city.
+     *
+     * @return string Formatted terminal name and city
+     */
+    public function getFormattedNameAttribute(): string
+    {
+        return "{$this->name} - {$this->city}";
+    }
+
 
 }

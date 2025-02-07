@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Terminal;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,6 +12,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TerminalFactory extends Factory
 {
+
+    protected $model = Terminal::class;
+
     /**
      * Define the model's default state.
      *
