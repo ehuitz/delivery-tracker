@@ -67,6 +67,15 @@ sail npm run dev
 
 ---
 
+### **7️⃣ Seed the Database with Fake Data**
+To populate the database with fake test data, run:
+```sh
+sail artisan migrate:fresh --seed
+```
+This will **reset the database** and run all seeders to generate sample data.
+
+---
+
 ## **🎯 Common Commands**
 
 | **Command** | **Description** |
