@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\InertiaController;
 use App\Models\Terminal;
 use Inertia\Inertia;
 use Inertia\Response;
 
-class TerminalController extends Controller
+class TerminalController extends InertiaController
 {
     public function index(): Response
     {

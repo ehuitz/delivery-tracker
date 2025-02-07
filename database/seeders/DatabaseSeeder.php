@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\PackageSeeder;
 use Database\Seeders\TerminalSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             TerminalSeeder::class,
+            PackageSeeder::class,
         ]);
     }
 }

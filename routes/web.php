@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\TerminalController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,5 +25,8 @@ Route::middleware([
     })->name('dashboard');
 
     Route::get('/terminals', [TerminalController::class, 'index'])->name('terminals.index');
+
+    Route::get('/packages', [PackageController::class, 'index'])->name('packages.index');
+
 
 });

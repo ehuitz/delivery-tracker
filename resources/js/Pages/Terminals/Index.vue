@@ -31,14 +31,22 @@ const props = defineProps({
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-300 bg-white">
-                                <tr v-for="terminal in terminals" :key="terminal.id" class="hover:bg-gray-100 transition">
-                                    <td class="px-6 py-4 text-gray-900">{{ terminal.name }}</td>
-                                    <td class="px-6 py-4 text-gray-700">{{ terminal.city }}</td>
-                                    <td class="px-6 py-4 text-gray-700">{{ terminal.latitude }}</td>
-                                    <td class="px-6 py-4 text-gray-700">{{ terminal.longitude }}</td>
-                                    <td class="px-6 py-4 text-gray-700"></td>
+                                <template v-if="terminals.length > 0">
+                                    <tr v-for="terminal in terminals" :key="terminal.id"
+                                        class="hover:bg-gray-100 transition">
+                                        <td class="px-6 py-4 text-gray-900">{{ terminal.name }}</td>
+                                        <td class="px-6 py-4 text-gray-700">{{ terminal.city }}</td>
+                                        <td class="px-6 py-4 text-gray-700">{{ terminal.latitude }}</td>
+                                        <td class="px-6 py-4 text-gray-700">{{ terminal.longitude }}</td>
+                                        <td class="px-6 py-4 text-gray-700"></td>
+                                    </tr>
+                                </template>
+                                <tr v-else>
+                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">No terminals available.
+                                    </td>
                                 </tr>
                             </tbody>
+
                         </table>
                     </div>
                 </div>
