@@ -14,6 +14,6 @@ class PackageSeeder extends Seeder
      */
     public function run(): void
     {
-        Package::factory()->count(50)->create();
+        Package::factory()->count(20)->create();
     }
 }

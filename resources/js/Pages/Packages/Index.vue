@@ -12,6 +12,10 @@ const goToPage = (url) => {
         router.get(url);
     }
 };
+
+const goToPackage = (id) => {
+    router.get(route('packages.show', id));
+};
 </script>
 
 <template>
@@ -23,7 +27,7 @@ const goToPage = (url) => {
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-full mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white shadow-xl rounded-lg p-6">
                     <h1 class="text-2xl font-bold mb-4">Packages List</h1>
                     <div class="overflow-x-auto">
@@ -33,22 +37,29 @@ const goToPage = (url) => {
                                     <th class="px-6 py-3 text-left">Tracking Number</th>
                                     <th class="px-6 py-3 text-left">Origin Terminal</th>
                                     <th class="px-6 py-3 text-left">Destination Terminal</th>
+                                    <th class="px-6 py-3 text-left">Last Scanned</th>
                                     <th class="px-6 py-3 text-left">Status</th>
                                     <th class="px-6 py-3 text-left">Actions</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-300 bg-white">
                                 <template v-if="packages.data.length > 0">
-                                    <tr v-for="pkg in packages.data" :key="pkg.id" class="hover:bg-gray-100 transition">
-                                        <td class="px-6 py-4 text-gray-900">{{ pkg.tracking_number }}</td>
+                                    <tr v-for="pkg in packages.data" :key="pkg.id" class="hover:bg-gray-100 transition cursor-pointer"
+                                        @click="goToPackage(pkg.id)">
+                                        <td class="px-6 py-4 text-blue-600 font-semibold underline">{{ pkg.tracking_number }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.origin_terminal }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.destination_terminal }}</td>
+                                        <td class="px-6 py-4 text-gray-900">{{ pkg.last_scanned_details  }}</td>
                                         <td :class="`px-6 py-4 ${pkg.status_color}`">{{ pkg.status }}</td>
-                                        <td class="px-6 py-4 text-gray-700"></td>
+                                        <td class="px-6 py-4 text-gray-700">
+                                            <button @click.stop="goToPackage(pkg.id)" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                                                View
+                                            </button>
+                                        </td>
                                     </tr>
                                 </template>
                                 <tr v-else>
-                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">No packages available.
+                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No packages available.
                                     </td>
                                 </tr>
                             </tbody>

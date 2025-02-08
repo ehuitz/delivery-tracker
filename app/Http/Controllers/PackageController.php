@@ -13,8 +13,8 @@ class PackageController extends InertiaController
 {
     public function index(): Response
     {
-        $packages = Package::with(['originTerminal', 'destinationTerminal'])
-            ->paginate(10) // Paginate with 10 items per page
+        $packages = Package::with(['originTerminal', 'destinationTerminal', 'lastScannedAt.terminal'])
+            ->paginate(10)
             ->through(fn ($package) => [
                 'id' => $package->id,
                 'tracking_number' => $package->tracking_number,
@@ -22,10 +22,31 @@ class PackageController extends InertiaController
                 'destination_terminal' => $package->destinationTerminal->formatted_name,
                 'status' => $package->status->value,
                 'status_color' => $package->status->color(),
+                'last_scanned_details' => $package->last_scan_details,
             ]);
 
         return Inertia::render('Packages/Index', [
             'packages' => $packages,
+        ]);
+    }
+
+    public function show(Package $package): Response
+    {
+        return Inertia::render('Packages/Show', [
+            'package' => [
+                'id' => $package->id,
+                'tracking_number' => $package->tracking_number,
+                'origin_terminal' => $package->originTerminal->formatted_name,
+                'destination_terminal' => $package->destinationTerminal->formatted_name,
+                'status' => $package->status->value,
+                'status_color' => $package->status->color(),
+                'last_scanned_details' => $package->last_scan_details,
+                'scan_history' => $package->scans()->with('terminal')->orderBy('scanned_at', 'asc')->get()
+                    ->map(fn ($scan) => [
+                        'terminal' => $scan->terminal->formatted_name,
+                        'scanned_at' => $scan->scanned_at->format('Y-m-d H:i'),
+                    ]),
+            ],
         ]);
     }
     

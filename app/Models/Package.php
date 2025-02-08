@@ -8,6 +8,8 @@ use App\Enums\PackageStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory; 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Package extends Model
 {
@@ -42,6 +44,40 @@ class Package extends Model
     public function destinationTerminal(): BelongsTo
     {
         return $this->belongsTo(Terminal::class, 'destination_terminal_id');
+    }
+
+    /**
+     * Get all scans associated with the package.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function scans(): HasMany
+    {
+        return $this->hasMany(PackageScan::class);
+    }
+
+    /**
+     * Get the most recent scan for the package.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function lastScannedAt(): HasOne
+    {
+        return $this->hasOne(PackageScan::class)->latestOfMany();
+    }
+
+    /**
+     * Get the last scanned terminal and time as a single formatted string.
+     *
+     * @return string
+     */
+    public function getLastScanDetailsAttribute(): string
+    {
+        if ($this->lastScannedAt && $this->lastScannedAt->scanned_at) {
+            return $this->lastScannedAt->terminal?->formatted_name . ' - ' . $this->lastScannedAt->scanned_at->format('Y-m-d H:i');
+        }
+
+        return 'Booked';
     }
 
 }

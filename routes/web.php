@@ -28,5 +28,6 @@ Route::middleware([
 
     Route::get('/packages', [PackageController::class, 'index'])->name('packages.index');
 
+    Route::get('/packages/{package}', [PackageController::class, 'show'])->name('packages.show');
 
 });
