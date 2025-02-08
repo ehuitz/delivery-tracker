@@ -39,6 +39,7 @@ class PackageControllerTest extends TestCase
                             'destination_terminal',
                             'status',
                             'status_color',
+                            'last_scanned_details',
                         ])
                     )
             );

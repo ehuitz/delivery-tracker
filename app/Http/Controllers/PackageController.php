@@ -13,8 +13,8 @@ class PackageController extends InertiaController
 {
     public function index(): Response
     {
-        $packages = Package::with(['originTerminal', 'destinationTerminal'])
-            ->paginate(10) // Paginate with 10 items per page
+        $packages = Package::with(['originTerminal', 'destinationTerminal', 'lastScannedAt.terminal'])
+            ->paginate(10)
             ->through(fn ($package) => [
                 'id' => $package->id,
                 'tracking_number' => $package->tracking_number,
@@ -22,6 +22,7 @@ class PackageController extends InertiaController
                 'destination_terminal' => $package->destinationTerminal->formatted_name,
                 'status' => $package->status->value,
                 'status_color' => $package->status->color(),
+                'last_scanned_details' => $package->last_scan_details,
             ]);
 
         return Inertia::render('Packages/Index', [

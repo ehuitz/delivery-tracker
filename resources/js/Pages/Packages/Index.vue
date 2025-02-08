@@ -23,7 +23,7 @@ const goToPage = (url) => {
         </template>
 
         <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="max-w-full mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white shadow-xl rounded-lg p-6">
                     <h1 class="text-2xl font-bold mb-4">Packages List</h1>
                     <div class="overflow-x-auto">
@@ -33,6 +33,7 @@ const goToPage = (url) => {
                                     <th class="px-6 py-3 text-left">Tracking Number</th>
                                     <th class="px-6 py-3 text-left">Origin Terminal</th>
                                     <th class="px-6 py-3 text-left">Destination Terminal</th>
+                                    <th class="px-6 py-3 text-left">Last Scanned</th>
                                     <th class="px-6 py-3 text-left">Status</th>
                                     <th class="px-6 py-3 text-left">Actions</th>
                                 </tr>
@@ -43,12 +44,13 @@ const goToPage = (url) => {
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.tracking_number }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.origin_terminal }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.destination_terminal }}</td>
+                                        <td class="px-6 py-4 text-gray-900">{{ pkg.last_scanned_details  }}</td>
                                         <td :class="`px-6 py-4 ${pkg.status_color}`">{{ pkg.status }}</td>
                                         <td class="px-6 py-4 text-gray-700"></td>
                                     </tr>
                                 </template>
                                 <tr v-else>
-                                    <td colspan="5" class="px-6 py-4 text-center text-gray-500">No packages available.
+                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No packages available.
                                     </td>
                                 </tr>
                             </tbody>
