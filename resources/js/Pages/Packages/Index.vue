@@ -12,6 +12,10 @@ const goToPage = (url) => {
         router.get(url);
     }
 };
+
+const goToPackage = (id) => {
+    router.get(route('packages.show', id));
+};
 </script>
 
 <template>
@@ -40,13 +44,18 @@ const goToPage = (url) => {
                             </thead>
                             <tbody class="divide-y divide-gray-300 bg-white">
                                 <template v-if="packages.data.length > 0">
-                                    <tr v-for="pkg in packages.data" :key="pkg.id" class="hover:bg-gray-100 transition">
-                                        <td class="px-6 py-4 text-gray-900">{{ pkg.tracking_number }}</td>
+                                    <tr v-for="pkg in packages.data" :key="pkg.id" class="hover:bg-gray-100 transition cursor-pointer"
+                                        @click="goToPackage(pkg.id)">
+                                        <td class="px-6 py-4 text-blue-600 font-semibold underline">{{ pkg.tracking_number }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.origin_terminal }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.destination_terminal }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.last_scanned_details  }}</td>
                                         <td :class="`px-6 py-4 ${pkg.status_color}`">{{ pkg.status }}</td>
-                                        <td class="px-6 py-4 text-gray-700"></td>
+                                        <td class="px-6 py-4 text-gray-700">
+                                            <button @click.stop="goToPackage(pkg.id)" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                                                View
+                                            </button>
+                                        </td>
                                     </tr>
                                 </template>
                                 <tr v-else>

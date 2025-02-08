@@ -29,5 +29,25 @@ class PackageController extends InertiaController
             'packages' => $packages,
         ]);
     }
+
+    public function show(Package $package): Response
+    {
+        return Inertia::render('Packages/Show', [
+            'package' => [
+                'id' => $package->id,
+                'tracking_number' => $package->tracking_number,
+                'origin_terminal' => $package->originTerminal->formatted_name,
+                'destination_terminal' => $package->destinationTerminal->formatted_name,
+                'status' => $package->status->value,
+                'status_color' => $package->status->color(),
+                'last_scanned_details' => $package->last_scan_details,
+                'scan_history' => $package->scans()->with('terminal')->orderBy('scanned_at', 'asc')->get()
+                    ->map(fn ($scan) => [
+                        'terminal' => $scan->terminal->formatted_name,
+                        'scanned_at' => $scan->scanned_at->format('Y-m-d H:i'),
+                    ]),
+            ],
+        ]);
+    }
     
 }
