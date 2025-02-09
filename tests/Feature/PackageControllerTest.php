@@ -70,4 +70,48 @@ class PackageControllerTest extends TestCase
                     ->has('package.scan_history', $package->scans()->count())
             );
     }
+
+    #[Test]
+    public function it_returns_correct_results_when_searching_by_tracking_number(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $terminals = Terminal::factory()->count(5)->create();
+
+        $package1 = Package::factory()->create([
+            'origin_terminal_id' => $terminals->random()->id,
+            'destination_terminal_id' => $terminals->random()->id,
+            'tracking_number' => 'ABC123XYZ'
+        ]);
+
+        // Perform search request
+        $response = $this->get('/packages?search=ABC123XYZ');
+
+        $response->assertStatus(200)
+            ->assertInertia(fn (AssertableInertia $page) =>
+                $page->component('Packages/Index')
+                    ->has('packages.data', 1)
+                    ->where('packages.data.0.tracking_number', 'ABC123XYZ')
+            );
+    }
+
+    #[Test]
+    public function it_returns_no_results_when_searching_with_no_match(): void
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $terminals = Terminal::factory()->count(5)->create();
+
+        Package::factory()->count(5)->create();
+
+        $response = $this->get('/packages?search=NONEXISTENT');
+
+        $response->assertStatus(200)
+            ->assertInertia(fn (AssertableInertia $page) =>
+                $page->component('Packages/Index')
+                    ->has('packages.data', 0)
+            );
+    }
 }
