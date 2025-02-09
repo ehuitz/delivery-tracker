@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Package;
 use Database\Seeders\PackageSeeder;
 use Database\Seeders\TerminalSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -26,5 +27,7 @@ class DatabaseSeeder extends Seeder
             TerminalSeeder::class,
             PackageSeeder::class,
         ]);
+
+        Package::makeAllSearchable();
     }
 }
