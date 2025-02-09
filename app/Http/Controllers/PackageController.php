@@ -54,6 +54,7 @@ class PackageController extends InertiaController
                         'scanned_at' => $scan->scanned_at->format('Y-m-d H:i'),
                     ]),
             ],
+            'terminals' => \App\Models\Terminal::select('id', 'name', 'city')->get(),
         ]);
     }
     
