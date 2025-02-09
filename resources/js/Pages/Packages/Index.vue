@@ -1,21 +1,29 @@
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, ref, watch } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { router } from "@inertiajs/vue3";
+import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
 
 const props = defineProps({
     packages: Object,
+    filters: Object,
 });
+
+const search = ref(props.filters?.search || "");
 
 const goToPage = (url) => {
     if (url) {
-        router.get(url);
+        router.get(url, { search: search.value }, { preserveState: true, replace: true });
     }
 };
 
 const goToPackage = (id) => {
     router.get(route('packages.show', id));
 };
+
+watch(search, (value) => {
+    router.get("/packages", { search: value }, { preserveState: true, replace: true });
+});
 </script>
 
 <template>
@@ -29,7 +37,21 @@ const goToPackage = (id) => {
         <div class="py-12">
             <div class="max-w-full mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white shadow-xl rounded-lg p-6">
-                    <h1 class="text-2xl font-bold mb-4">Packages List</h1>
+
+                    <div class="flex justify-between items-center mb-4">
+                        <h1 class="text-2xl font-bold">Packages List</h1>
+
+                        <div class="relative">
+                            <MagnifyingGlassIcon class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                            <input 
+                                v-model="search"
+                                type="text" 
+                                placeholder="Search"
+                                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 text-gray-800 w-72"
+                            />
+                        </div>
+                    </div>
+
                     <div class="overflow-x-auto">
                         <table class="w-full rounded-lg shadow-sm">
                             <thead class="bg-gray-200 text-gray-700 uppercase text-sm tracking-wider">

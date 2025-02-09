@@ -74,6 +74,10 @@ sail artisan migrate:fresh --seed
 ```
 This will **reset the database** and run all seeders to generate sample data.
 
+Also you can run to sync the Packages sync data
+```sh
+sail artisan meilisearch:sync
+```
 ---
 
 ## **🎯 Common Commands**

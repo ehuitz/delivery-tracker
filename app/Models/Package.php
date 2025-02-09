@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Laravel\Scout\Searchable;
 
 class Package extends Model
 {
     use HasFactory;
+    use Searchable;
 
     protected $fillable = [
         'tracking_number',
@@ -78,6 +80,17 @@ class Package extends Model
         }
 
         return 'Booked';
+    }
+
+    public function toSearchableArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'tracking_number' => $this->tracking_number,
+            'origin_terminal' => $this->originTerminal->formatted_name,
+            'destination_terminal' => $this->destinationTerminal->formatted_name,
+            'status' => $this->status->value,
+        ];
     }
 
 }
