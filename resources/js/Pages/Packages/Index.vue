@@ -1,8 +1,9 @@
 <script setup>
-import { defineProps, ref, watch } from "vue";
+import { defineProps, ref, watch, onMounted } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { router } from "@inertiajs/vue3";
 import { MagnifyingGlassIcon } from "@heroicons/vue/24/solid";
+import Echo from "laravel-echo";
 
 const props = defineProps({
     packages: Object,
@@ -10,6 +11,27 @@ const props = defineProps({
 });
 
 const search = ref(props.filters?.search || "");
+const packages = ref(props.packages?.data || []);
+const updatedPackages = ref(new Set()); // Track updated package IDs
+
+onMounted(() => {
+    window.Echo.private("packages")
+        .listen(".package.scanned", (event) => {
+
+            const index = packages.value.findIndex(pkg => pkg.id === event.id);
+            
+            if (index !== -1) {
+                packages.value[index] = { ...packages.value[index], ...event };
+            } else {
+                packages.value.unshift(event);
+            }
+
+            updatedPackages.value.add(event.id);
+            setTimeout(() => {
+                updatedPackages.value.delete(event.id);
+            }, 3000);
+        });
+});
 
 const goToPage = (url) => {
     if (url) {
@@ -65,9 +87,14 @@ watch(search, (value) => {
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-300 bg-white">
-                                <template v-if="packages.data.length > 0">
-                                    <tr v-for="pkg in packages.data" :key="pkg.id" class="hover:bg-gray-100 transition cursor-pointer"
-                                        @click="goToPackage(pkg.id)">
+                                <template v-if="packages.length > 0">
+                                    <tr 
+                                        v-for="pkg in packages" 
+                                        :key="pkg.id" 
+                                        @click="goToPackage(pkg.id)"
+                                        class="hover:bg-gray-100 transition cursor-pointer"
+                                        :class="{ 'bg-yellow-200 transition-all duration-400': updatedPackages.has(pkg.id) }"
+                                    >
                                         <td class="px-6 py-4 text-blue-600 font-semibold underline">{{ pkg.tracking_number }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.origin_terminal }}</td>
                                         <td class="px-6 py-4 text-gray-900">{{ pkg.destination_terminal }}</td>
@@ -81,8 +108,7 @@ watch(search, (value) => {
                                     </tr>
                                 </template>
                                 <tr v-else>
-                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No packages available.
-                                    </td>
+                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No packages available.</td>
                                 </tr>
                             </tbody>
                         </table>

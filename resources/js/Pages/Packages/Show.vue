@@ -1,20 +1,22 @@
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, ref, onMounted } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { router } from "@inertiajs/vue3";
 import { HomeIcon, FlagIcon, TruckIcon, CheckCircleIcon, QrCodeIcon } from "@heroicons/vue/24/outline";
+import Echo from "laravel-echo";
 
 const props = defineProps({
     package: Object,
     terminals: Array,
 });
 
+const packageData = ref({ ...props.package });
 const terminal_id = ref("");
-const scanned_at = ref(new Date().toISOString().slice(0, 16)); // Default to now
+const scanned_at = ref(new Date().toISOString().slice(0, 16));
 const errors = ref({});
 
 const submitScan = () => {
-    router.post(`/api/packages/${props.package.id}/scans`, {
+    router.post(`/api/packages/${packageData.value.id}/scans`, {
         terminal_id: terminal_id.value,
         scanned_at: scanned_at.value,
     }, {
@@ -28,15 +30,22 @@ const submitScan = () => {
     });
 };
 
-const getIcon = (index, scan, packageData) => {
+const getIcon = (index, scan) => {
     if (index === 0) return HomeIcon;
-    if (scan.terminal === packageData.destination_terminal) return FlagIcon;
+    if (scan.terminal === packageData.value.destination_terminal) return FlagIcon;
     return TruckIcon;
 };
+
+onMounted(() => {
+    window.Echo.private(`package.${packageData.value.id}`)
+        .listen(".package.scanned", (event) => {
+            packageData.value = { ...packageData.value, ...event };
+        });
+});
 </script>
 
 <template>
-    <AppLayout :title="`Package Details - ${package.tracking_number}`">
+    <AppLayout :title="`Package Details - ${packageData.tracking_number}`">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">Package Details</h2>
         </template>
@@ -51,7 +60,7 @@ const getIcon = (index, scan, packageData) => {
                             <QrCodeIcon class="w-6 h-6 text-gray-500" />
                             <div>
                                 <p class="text-gray-600 text-sm">Tracking Number</p>
-                                <p class="text-gray-900 font-semibold">{{ package.tracking_number }}</p>
+                                <p class="text-gray-900 font-semibold">{{ packageData.tracking_number }}</p>
                             </div>
                         </div>
 
@@ -59,7 +68,7 @@ const getIcon = (index, scan, packageData) => {
                             <HomeIcon class="w-6 h-6 text-gray-500" />
                             <div>
                                 <p class="text-gray-600 text-sm">Origin</p>
-                                <p class="text-gray-900 font-semibold">{{ package.origin_terminal }}</p>
+                                <p class="text-gray-900 font-semibold">{{ packageData.origin_terminal }}</p>
                             </div>
                         </div>
 
@@ -67,7 +76,7 @@ const getIcon = (index, scan, packageData) => {
                             <FlagIcon class="w-6 h-6 text-gray-500" />
                             <div>
                                 <p class="text-gray-600 text-sm">Destination</p>
-                                <p class="text-gray-900 font-semibold">{{ package.destination_terminal }}</p>
+                                <p class="text-gray-900 font-semibold">{{ packageData.destination_terminal }}</p>
                             </div>
                         </div>
 
@@ -75,7 +84,7 @@ const getIcon = (index, scan, packageData) => {
                             <CheckCircleIcon class="w-6 h-6 text-gray-500" />
                             <div>
                                 <p class="text-gray-600 text-sm">Status</p>
-                                <p :class="`text-gray-700 font-semibold ${package.status_color}`">{{ package.status }}</p>
+                                <p :class="`text-gray-700 font-semibold ${packageData.status_color}`">{{ packageData.status }}</p>
                             </div>
                         </div>
                     </div>
@@ -101,12 +110,12 @@ const getIcon = (index, scan, packageData) => {
                     <h2 class="text-xl font-bold mb-4">Package History</h2>
                     <div class="relative">
                         <ul class="border-l-4 border-gray-300 pl-5 relative">
-                            <template v-if="package.scan_history.length > 0">
-                                <li v-for="(scan, index) in package.scan_history" :key="index"
+                            <template v-if="packageData.scan_history.length > 0">
+                                <li v-for="(scan, index) in packageData.scan_history" :key="index"
                                     class="mb-6 relative flex items-start space-x-4">
                                     <div
                                         class="absolute -left-[36px] w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full border border-gray-300 shadow">
-                                        <component :is="getIcon(index, scan, package)"
+                                        <component :is="getIcon(index, scan)"
                                             class="w-5 h-5 text-gray-500" />
                                     </div>
                                     <div class="bg-gray-100 p-4 rounded-lg shadow-md w-full">
