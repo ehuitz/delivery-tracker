@@ -52,6 +52,8 @@ class PackageController extends InertiaController
                     ->map(fn ($scan) => [
                         'terminal' => $scan->terminal->formatted_name,
                         'scanned_at' => $scan->scanned_at->format('Y-m-d H:i'),
+                        'latitude' => $scan->terminal->latitude,
+                        'longitude' => $scan->terminal->longitude,
                     ]),
             ],
             'terminals' => \App\Models\Terminal::select('id', 'name', 'city')->get(),

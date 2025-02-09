@@ -105,6 +105,25 @@ http://localhost
 
 🎉 **You're ready to start developing!** 🚀
 
+---
+
+## 📦 Updating Package Scans via API
+
+You can update a package's scan history using the API endpoint (NO authentication implemented):
+
+### **📤 Endpoint**
+```http
+POST http://localhost/api/packages/{package_id}/update-scans
+````
+
+### 📩 Request Body (JSON)
+```json
+{
+    "terminal_id": 3,
+    "scanned_at": "2025-02-09T15:30:00Z"
+}
+```
+
 ## **🛠️ Docker Services Included**
 
 The following services are included in `docker-compose.yml`:
