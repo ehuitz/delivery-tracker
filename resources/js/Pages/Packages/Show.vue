@@ -1,11 +1,32 @@
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import { router } from "@inertiajs/vue3";
 import { HomeIcon, FlagIcon, TruckIcon, CheckCircleIcon, QrCodeIcon } from "@heroicons/vue/24/outline";
 
 const props = defineProps({
-    package: Object
+    package: Object,
+    terminals: Array,
 });
+
+const terminal_id = ref("");
+const scanned_at = ref(new Date().toISOString().slice(0, 16)); // Default to now
+const errors = ref({});
+
+const submitScan = () => {
+    router.post(`/api/packages/${props.package.id}/scans`, {
+        terminal_id: terminal_id.value,
+        scanned_at: scanned_at.value,
+    }, {
+        preserveState: true,
+        onError: (err) => errors.value = err,
+        onSuccess: () => {
+            terminal_id.value = "";
+            scanned_at.value = new Date().toISOString().slice(0, 16);
+            errors.value = {};
+        }
+    });
+};
 
 const getIcon = (index, scan, packageData) => {
     if (index === 0) return HomeIcon;
@@ -57,6 +78,22 @@ const getIcon = (index, scan, packageData) => {
                                 <p :class="`text-gray-700 font-semibold ${package.status_color}`">{{ package.status }}</p>
                             </div>
                         </div>
+                    </div>
+
+                    <h2 class="mt-6 text-lg font-semibold text-gray-800">Log a Scan</h2>
+                    <div class="mt-2 space-y-2">
+                        <select v-model="terminal_id" class="w-full p-2 border rounded-md">
+                            <option value="" disabled>Select Terminal</option>
+                            <option v-for="term in terminals" :key="term.id" :value="term.id">
+                                {{ term.name }} - {{ term.city }}
+                            </option>
+                        </select>
+                        <input v-model="scanned_at" type="datetime-local" class="w-full p-2 border rounded-md" />
+                        <button @click="submitScan" class="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700">
+                            Add Scan
+                        </button>
+                        <p v-if="errors.terminal_id" class="text-red-500 text-sm">{{ errors.terminal_id[0] }}</p>
+                        <p v-if="errors.scanned_at" class="text-red-500 text-sm">{{ errors.scanned_at[0] }}</p>
                     </div>
                 </div>
 
